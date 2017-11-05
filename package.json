@@ -4,7 +4,7 @@
   "description": "nodejs application using jwt, json_patching and thumbail generation",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --reporter spec",
+    "test": "./node_modules/.bin/mocha --reporter spec",
     "start": "node index.js"
   },
   "dependencies": {
