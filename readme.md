@@ -18,8 +18,7 @@ Hi All. This is a webservice with three endpoints:
 *{username:admin , password:admin}*
 
 ### Installation Instructions.
-2. Clone this repository and run **npm i**.
-3. Configure port by setting PORT_NUM and logging levels by setting LOG_LEVEL environment variables. (optional)
-4. Provide Admin credentials as ADMIN_USER and ADMIN_PASS env variables. (optional)
+1. Clone this repository and run **npm i**.
+2. Configure port by setting PORT_NUM and logging levels by setting LOG_LEVEL environment variables. (optional)
+3. Provide Admin credentials as ADMIN_USER and ADMIN_PASS env variables. (optional)
 4. Run **npm test** to run tests and **npm start** to start the server.
-5. Enjoy the beauty that this micro-service is.
