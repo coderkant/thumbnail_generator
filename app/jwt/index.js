@@ -5,6 +5,7 @@ const admin_user = (process.env.ADMIN_USER != undefined) ? process.env.ADMIN_USE
 const admin_pass = (process.env.ADMIN_PASS != undefined) ? process.env.ADMIN_PASS : 'admin';
 
 const ensureUserAndPassword = (req, res, next) => {
+    logger.info("ensureUserAndPassword called "+req.url);    
     if (req.body.hasOwnProperty('username') && (req.body.hasOwnProperty('password'))) {
         var username = req.body.username;
         var password = req.body.password;
@@ -28,29 +29,33 @@ const ensureUserAndPassword = (req, res, next) => {
 }
 
     const ensureToken = (req, res, next) => {
+        logger.info("ensureToken called "+req.url);
         const reqHeaders = req.get("authorization");
         if (reqHeaders !== undefined) {
             const reqToken = reqHeaders.split(" ")[1];
             req.token = reqToken;    //make it easy to access
             jwt.verify(reqToken, 'my secret key', (err, decoded) => {
                 if (err){
-                     res.sendStatus(403).json({'error':'error verifying token'}).end();
-                     logger.error('error verifying token for json patching');                     
+                     logger.error('error verifying token for json patching '+req.url);                                         
+                     res.status(403).json({'error':'error verifying token'}).end();
+                     return;
                 }
                 else{
                 logger.info('decoded token '+decoded);
                 next();
                 }
             });
-            next(); //let it go ahead
+           // next(); //let it go ahead
         }
         else {
-            res.sendStatus(403).json({'error':'There must be the token in authorization header'}).end();
-            logger.error('There must be the token in authorization header for json patching');
+            logger.error('There must be the token in authorization header for json patching '+req.url);            
+            res.status(403).json({'error':'There must be the token in authorization header'}).end();
+            return;
         }
     };
 
     const supplyToken = (req, res, next) => {
+        logger.info("inside supplyToken "+req.url);
         const user = req.user;
         //sign token synchronously
         const token = jwt.sign({ user }, 'my secret key');

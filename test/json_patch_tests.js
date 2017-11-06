@@ -3,29 +3,30 @@ const request = require("request");
 const logger = require('../app/loggingAndMonitoring/logging')
 const baseURL = "http://localhost:8000"
 let token;
-before(function(done) {
-   let endPoint='/login';
-   let options = {
-        url: baseURL+endPoint,
-        headers: {
-            'content-type' : 'application/json',
-            },
-        json:{
-            "username":"any",
-            "password":"any"
-        }
-    };
-        // token=request(options);
-        // logger.info(token);
 
-    request(options, function(error, response, body) {
-        token = body.token
-        logger.info('fresh token '+token);
-        done();
-    });    
-  });
    describe("Json Patching test",function(){
-        let endPoint = "/apply_json_patch";        
+    let endPoint = "/apply_json_patch";    
+    before(function(done) {
+        let endPoint='/login';
+        let options = {
+             url: baseURL+endPoint,
+             headers: {
+                 'content-type' : 'application/json',
+                 },
+             json:{
+                 "username":"any",
+                 "password":"any"
+             }
+         };
+             // token=request(options);
+             // logger.info(token);
+     
+         request.post(options, function(error, response, body) {
+             token = body.token
+             logger.info('fresh token '+token);
+             done();
+         });    
+       });
         it("does valid patching",function(done){
             let mydoc = {"baz": "qux","foo": "bar"};
             let thepatch = [{ "op": "replace", "path": "/baz", "value": "boo" }]
@@ -50,7 +51,7 @@ before(function(done) {
                 }
               });    
         });
-        it('rejects empty bodied requests',function(){
+        it('rejects empty bodied requests',function(done){
             let expected = {
                 "error": "Body must contain theObject and thePatch fields"
             };
@@ -65,11 +66,12 @@ before(function(done) {
                 if(error) console.log(error);
                 else{
                     expect(response.statusCode).to.equal(400);
-                    expect(body).to.deep.equal(expected);
+                    expect(JSON.parse(body)).to.deep.equal(expected);
+                    done();
                 }
               });    
         });
-        it('rejects bad patch objects',function(){
+        it('rejects bad patch objects',function(done){
             let mydoc = {"baz": "qux","foo": "bar"};
             let thepatch = [{ "op": "remove", "path": "/loo" }]
             let expected = {
@@ -83,13 +85,18 @@ before(function(done) {
                 headers: {
                     'content-type' : 'application/json',
                     'Authorization': 'bearer '+token,
-                    }
+                    },
+                json:{
+                    'theObject':mydoc,
+                    'thePatch':thepatch
+                }
                 };
             request.post(options, function(error, response, body) {
                 if(error) console.log(error);
                 else{
                     expect(response.statusCode).to.equal(400);
                     expect(body).to.deep.equal(expected);
+                    done();
                 }
               });    
         });

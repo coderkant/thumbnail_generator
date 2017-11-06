@@ -2,6 +2,7 @@ const jsonpatch = require('jsonpatch')
 const logger = require('../loggingAndMonitoring/logging')
 
 const applyPatch = (req,res) => {
+    logger.info("inside applyPatch "+req.url);    
     logger.info(req.body.theObject);
     logger.info(req.body.thePatch);
     try{
@@ -15,6 +16,7 @@ const applyPatch = (req,res) => {
 }
 
 const validateBody =(req,res,next)=> {
+    logger.info("inside validateBody "+req.url);
     logger.silly(req.body.hasOwnProperty('theObject'));
     logger.silly(req.body.hasOwnProperty('thePatch'));    
     if(req.body.hasOwnProperty('theObject') && req.body.hasOwnProperty('thePatch')){
@@ -23,7 +25,7 @@ const validateBody =(req,res,next)=> {
         next();
     }
     else{
-        logger.info('recieved invalid request')
+        logger.info('recieved invalid patching request '+req.url)
         res.status(400).json({'error':'Body must contain theObject and thePatch fields'}).end();
     }
 }

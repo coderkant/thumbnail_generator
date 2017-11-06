@@ -7,7 +7,7 @@ let endPoint="/login"
 
 describe("Login with JWT Tester", function() {
         let token;
-        it("supplies Tokens",function(){
+        it("supplies Tokens",function(done){
             let options = {
                 url: baseURL+endPoint,
                 headers: {
@@ -18,16 +18,18 @@ describe("Login with JWT Tester", function() {
                     "password":"any"
                 }
                 };
-            request(options, function(error, response, body) {
+            request.post(options, function(error, response, body) {
+                logger.info(body);
                 expect(response.statusCode).to.equal(200);
-                expect(body.token).to.not.equal(null)
-                expect(body.token).to.not.be.an('undefined')
-                expect(body.token).to.not.be('')
+                expect(body.token).to.not.null
+                expect(body.token).to.not.be.undefined
+                expect(body.token).to.not.be.empty
                 token = body.token
+                done();
               });    
         });
 
-        it("rejects empty requests",function(){
+        it("rejects empty requests",function(done){
             let expected = { "error": "Must have a username and password fields in request body"};
             let options = {
                 url: baseURL+endPoint,
@@ -35,25 +37,10 @@ describe("Login with JWT Tester", function() {
                     'content-type' : 'application/json'
                 }
               };
-            request(options, function(error, response, body) {
+            request.post(options, function(error, response, body) {
                 expect(response.statusCode).to.equal(403);
-                expect(body).to.deep.equal(expected);
+                expect(body).to.deep.equal(JSON.stringify(expected));
+                done();
               });    
         });
-
-        // it("sends valid Tokens",function(){
-        //     let options = {
-        //         url: url+endPoint,
-        //         headers: {
-        //             'content-type' : 'application/json',
-        //         }
-        //       };
-        //     request(options, function(error, response, body) {
-        //         expect(response.statusCode).to.equal(200);
-        //         expect(body.token).to.not.equal(null)
-        //         expect(body.token).to.not.be.an('undefined')
-        //         expect(body.token).to.not.be('')
-        //         token = body.token
-        //       });    
-        // });
     });
