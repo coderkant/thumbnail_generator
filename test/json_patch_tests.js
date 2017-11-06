@@ -40,7 +40,7 @@ let token;
                 }
                 };
             request.post(options, (error, response, body)=> {
-                if(error) console.log(error);
+                if(error) logger.error(error);
                 else{
                     expect(response.statusCode).to.equal(200);
                     expect(body).to.deep.equal(expected);
@@ -60,7 +60,7 @@ let token;
                     }
                 };
             request.post(options, function(error, response, body) {
-                if(error) console.log(error);
+                if(error) logger.error(error);
                 else{
                     expect(response.statusCode).to.equal(400);
                     expect(JSON.parse(body)).to.deep.equal(expected);
@@ -89,7 +89,7 @@ let token;
                 }
                 };
             request.post(options, function(error, response, body) {
-                if(error) console.log(error);
+                if(error) logger.error(error);
                 else{
                     expect(response.statusCode).to.equal(400);
                     expect(body).to.deep.equal(expected);

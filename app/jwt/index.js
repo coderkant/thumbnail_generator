@@ -28,42 +28,70 @@ const ensureUserAndPassword = (req, res, next) => {
     }
 }
 
-    const ensureToken = (req, res, next) => {
-        logger.info("ensureToken called "+req.url);
-        const reqHeaders = req.get("authorization");
-        if (reqHeaders !== undefined) {
-            const reqToken = reqHeaders.split(" ")[1];
-            req.token = reqToken;    //make it easy to access
-            jwt.verify(reqToken, 'my secret key', (err, decoded) => {
-                if (err){
-                     logger.error('error verifying token '+req.url);                                         
-                     res.status(403).json({'error':'error verifying token'}).end();
-                     return;
-                }
-                else{
-                logger.info('decoded token '+decoded);
+const ensureAdmin = (req,res,next) =>{
+    console.log(JSON.stringify(req.decodedToken));
+    if(req.decodedToken.hasOwnProperty('user')){
+        if(req.decodedToken.user.hasOwnProperty('scope')){
+            if(req.decodedToken.user.scope.includes('admin')){
+                logger.info('successful admin login'+JSON.stringify(req.user));
                 next();
-                }
-            });
+            }
+            else{
+                logger.error('invalid admin login');
+                res.status(403).json({error:'Admin Access Needed'}).end();
+            }
+            
         }
-        else {
-            logger.error('There must be the token in authorization header '+req.url);            
-            res.status(403).json({error:"There must be the token in authorization header"}).end();
-            return;
+        else{
+            logger.error('invalid admin login');
+            res.status(403).json({error:'Admin Access Needed'}).end();
         }
-    };
+    }
+    else{
+        logger.error('invalid admin login');
+        res.status(403).json({error:'Admin Access Needed'}).end();
+    }
 
-    const supplyToken = (req, res, next) => {
-        logger.info("inside supplyToken "+req.url);
-        const user = req.user;
-        //sign token synchronously
-        const token = jwt.sign({ user }, 'my secret key');
-        logger.info('recieved valid login request');
-        res.json({ token: token});
-    };
+}
 
-    module.exports = {
-        ensureUserAndPassword: ensureUserAndPassword,
-        ensureToken: ensureToken,
-        supplyToken: supplyToken
-    };
+const ensureToken = (req, res, next) => {
+    logger.info("ensureToken called "+req.url);
+    const reqHeaders = req.get("authorization");
+    if (reqHeaders !== undefined) {
+        const reqToken = reqHeaders.split(" ")[1];
+        req.token = reqToken;    //make it easy to access
+        jwt.verify(reqToken, 'my secret key', (err, decoded) => {
+            if (err){
+                    logger.error('error verifying token '+req.url);                                         
+                    res.status(403).json({'error':'error verifying token'}).end();
+                    return;
+            }
+            else{
+            logger.info('decoded token '+decoded);
+            req.decodedToken = decoded; //make it easy to access
+            next();
+            }
+        });
+    }
+    else {
+        logger.error('There must be the token in authorization header '+req.url);            
+        res.status(403).json({error:"There must be the token in authorization header"}).end();
+        return;
+    }
+};
+
+const supplyToken = (req, res, next) => {
+    logger.info("inside supplyToken "+req.url);
+    const user = req.user;
+    //sign token synchronously
+    const token = jwt.sign({ user }, 'my secret key');
+    logger.info('recieved valid login request');
+    res.json({ token: token});
+};
+
+module.exports = {
+    ensureUserAndPassword: ensureUserAndPassword,
+    ensureToken: ensureToken,
+    ensureAdmin:ensureAdmin,
+    supplyToken: supplyToken
+};
