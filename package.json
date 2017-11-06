@@ -4,7 +4,7 @@
   "description": "nodejs application using jwt, json_patching and thumbail generation",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec",
+    "test": "nyc ./node_modules/.bin/mocha --reporter spec",
     "start": "node index.js"
   },
   "dependencies": {
@@ -22,7 +22,8 @@
     "winston": "^3.0.0-rc1"
   },
   "devDependencies": {
-    "mocha": "^4.0.1"
+    "mocha": "^4.0.1",
+    "nyc": "^11.3.0"
   },
   "repository": {
     "type": "git",
