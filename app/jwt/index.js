@@ -36,7 +36,7 @@ const ensureUserAndPassword = (req, res, next) => {
             req.token = reqToken;    //make it easy to access
             jwt.verify(reqToken, 'my secret key', (err, decoded) => {
                 if (err){
-                     logger.error('error verifying token for json patching '+req.url);                                         
+                     logger.error('error verifying token '+req.url);                                         
                      res.status(403).json({'error':'error verifying token'}).end();
                      return;
                 }
@@ -45,11 +45,10 @@ const ensureUserAndPassword = (req, res, next) => {
                 next();
                 }
             });
-           // next(); //let it go ahead
         }
         else {
-            logger.error('There must be the token in authorization header for json patching '+req.url);            
-            res.status(403).json({'error':'There must be the token in authorization header'}).end();
+            logger.error('There must be the token in authorization header '+req.url);            
+            res.status(403).json({error:"There must be the token in authorization header"}).end();
             return;
         }
     };

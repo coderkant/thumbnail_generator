@@ -14,13 +14,10 @@ let token;
                  'content-type' : 'application/json',
                  },
              json:{
-                 "username":"any",
-                 "password":"any"
+                 "username":"any1",
+                 "password":"any1"
              }
          };
-             // token=request(options);
-             // logger.info(token);
-     
          request.post(options, function(error, response, body) {
              token = body.token
              logger.info('fresh token '+token);

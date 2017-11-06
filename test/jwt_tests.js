@@ -14,8 +14,8 @@ describe("Login with JWT Tester", function() {
                     'content-type' : 'application/json',
                     },
                 json:{
-                    "username":"any",
-                    "password":"any"
+                    "username":"any2",
+                    "password":"any2"
                 }
                 };
             request.post(options, function(error, response, body) {
