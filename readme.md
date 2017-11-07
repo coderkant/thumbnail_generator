@@ -22,3 +22,7 @@ Hi All. This is a webservice with three endpoints:
 2. Configure port by setting PORT_NUM and logging levels by setting LOG_LEVEL environment variables. (optional)
 3. Provide Admin credentials as ADMIN_USER and ADMIN_PASS env variables. (optional)
 4. Run **npm test** to run tests and **npm start** to start the server.
+
+### Additional info.
+1. Run **docker build -t coderkant/jwt_node .** to build docker image.
+2. Run the image using **docker run -p PORT_OF_CHOICE:8000 -d coderkant/jwt_node** 
